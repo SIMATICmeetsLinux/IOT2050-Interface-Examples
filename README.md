@@ -1,6 +1,6 @@
 # SIMATIC IOT2050 Interface Examples
 
-> :warning: **Disclaimer:**: Be very careful with the following examples. These code snippets are intended to give you an idea of how to implement your own applications and are not intended for one-to-one use.
+> :warning: **Disclaimer:** Be very careful with the following examples. These code snippets are intended to give you an idea of how to implement your own applications and are not intended for one-to-one use.
 
 ## Introduction
 
