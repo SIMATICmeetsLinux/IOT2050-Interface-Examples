@@ -1,6 +1,40 @@
 # SIMATIC IOT2050 Interface Examples
 
-> :warning: **Disclaimer:** Be very careful with the following examples. These code snippets are intended to give you an idea of how to implement your own applications and are not intended for one-to-one use.
+- [SIMATIC IOT2050 Interface Examples](#simatic-iot2050-interface-examples)
+  - [Introduction](#introduction)
+  - [Requirements](#requirements)
+  - [Setup Instructions](#setup-instructions)
+  - [Example Code Implementations](#example-code-implementations)
+    - [Digital Input](#digital-input)
+      - [C++ Implementation (DI)](#c-implementation-di)
+      - [Python Implementation (DI)](#python-implementation-di)
+    - [Digital Output](#digital-output)
+      - [C++ Implementation (DO)](#c-implementation-do)
+      - [Python Implementation (DO)](#python-implementation-do)
+    - [Analogue Input](#analogue-input)
+      - [C++ Implementation (AI)](#c-implementation-ai)
+      - [Python Implementation (AI)](#python-implementation-ai)
+    - [PWM Output](#pwm-output)
+      - [C++ Implementation (PWM)](#c-implementation-pwm)
+      - [Python Implementation (PWM)](#python-implementation-pwm)
+    - [I2C](#i2c)
+      - [C++ Implementation (I2C)](#c-implementation-i2c)
+      - [Python Implementation (I2C)](#python-implementation-i2c)
+    - [UART](#uart)
+      - [C++ Implementation (UART)](#c-implementation-uart)
+      - [Python Implementation (UART)](#python-implementation-uart)
+    - [SPI](#spi)
+      - [C++ Implementation (SPI)](#c-implementation-spi)
+      - [Python Implementation (SPI)](#python-implementation-spi)
+    - [Interrupt by USR-Button](#interrupt-by-usr-button)
+      - [C++ Implementation (USR)](#c-implementation-usr)
+      - [Python Implementation (USR)](#python-implementation-usr)
+  - [Additional Notes](#additional-notes)
+  - [**Related Links**](#related-links)
+  - [Contribution and Contribution License Agreement](#contribution-and-contribution-license-agreement)
+  - [**Licence and Legal Information**](#licence-and-legal-information)
+
+> **Safety Notice for Handling Power and External Devices**: Use only appropriate power sources that match the specifications of your connected devices! Power off the device before connecting or disconnecting sensors, actuators, or other modules. Improper handling of electrical components can result in damage to the device or personal injury.
 
 ## Introduction
 
@@ -17,17 +51,20 @@ This document provides a collection of example codes demonstrating how to interf
 
 ## Setup Instructions
 
-Before running the examples, ensure that your SIMATIC IOT2050 is set up correctly and that the MRAA library is installed respectively the pre-installed version was not altered. Connect any necessary peripherals (such as sensors, LEDs, or communication modules) to the appropriate pins or ports on the device. Please have a look on the [Documentation](https://iotdk.intel.com/docs/master/mraa/python/) for finding out your desired Pins:
+Before running the examples, ensure that your SIMATIC IOT2050 is set up correctly and that the MRAA library is installed respectively the pre-installed version was not altered. Connect any necessary peripherals (such as sensors, LEDs, or communication modules) to the appropriate pins or ports on the device. Please have a look on the [mraa's Documentation](https://iotdk.intel.com/docs/master/mraa/python/) for finding out your desired Pins:
 
-![GPIO Diagram](./src/img/GPIO.PNG)
+![GPIO Diagram](./docs/graphics/GPIO.PNG)
 
 ## Example Code Implementations
+
+> **Disclaimer:** Please note: The following examples are intended as guidance and should be adapted to your specific use case.
 
 ### Digital Input
 
 The Digital Input example demonstrates how to read the state of a digital input pin on the IOT2050. This can be used for sensing binary states like a button press or a sensor output. The code continuously reads the value of a specified digital pin and prints the result, which will be either high (1) or low (0).
 
-#### C++ Implementation
+#### C++ Implementation (DI)
+
 ```cpp
 #include <mraa.hpp>
 #include <iostream>
@@ -51,7 +88,8 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (DI)
+
 ```python
 import mraa
 import time
@@ -73,7 +111,8 @@ while True:
 
 The Digital Output example showcases how to control a digital output pin. This is typically used to turn devices like LEDs or relays on and off. The code sets a specified pin as an output and toggles it between high and low states, effectively switching an attached device on and off.
 
-#### C++ Implementation
+#### C++ Implementation (DO)
+
 ```cpp
 #include <mraa.hpp>
 #include <unistd.h> // for sleep()
@@ -97,29 +136,30 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (DO)
+
 ```python
 import mraa
 import time
 
-# Initialize a digital pin for input, e.g., pin 6
-input_pin = mraa.Gpio(6)
+# Initialize a digital pin for output, e.g., pin 5
+output_pin = mraa.Gpio(5)
+output_pin.dir(mraa.DIR_OUT)
 
-# Set the pin as an input
-input_pin.dir(mraa.DIR_IN)
-
-# Read the value of the input pin
 while True:
-    value = input_pin.read()
-    print("Input value: ", value)
-    time.sleep(1)
+    output_pin.write(1)  # Turn on
+    time.sleep(1)
+    output_pin.write(0)  # Turn off
+    time.sleep(1)
+
 ```
 
 ### Analogue Input
 
 In the Analog Input example, we demonstrate how to read an analog value from an analog input pin. This is useful for reading values from analog sensors like temperature sensors or potentiometers. The code continuously reads and prints the analog value from a specified pin.
 
-#### C++ Implementation
+#### C++ Implementation (AI)
+
 ```cpp
 #include <mraa.hpp>
 #include <iostream>
@@ -140,7 +180,8 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (AI)
+
 ```python
 import mraa
 import time
@@ -159,7 +200,8 @@ while True:
 
 The PWM Output example illustrates how to generate a Pulse Width Modulation (PWM) signal. PWM is often used for controlling the speed of motors or the brightness of LEDs. The code sets up a PWM pin, specifies its frequency and duty cycle, and then changes the duty cycle after a brief period.
 
-#### C++ Implementation
+#### C++ Implementation (PWM)
+
 ```cpp
 #include <mraa.hpp>
 #include <unistd.h> // for sleep()
@@ -185,7 +227,8 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (PWM)
+
 ```python
 import mraa
 import time
@@ -211,7 +254,8 @@ pwm_pin.write(0.2)
 
 This I2C example shows how to communicate with devices using the I2C protocol. I2C communication is widely used for interfacing with various sensors and peripherals. The code demonstrates how to read data from a device connected via I2C.
 
-#### C++ Implementation
+#### C++ Implementation (I2C)
+
 ```cpp
 #include <mraa.hpp>
 #include <iostream>
@@ -232,7 +276,8 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (I2C)
+
 ```python
 import mraa
 
@@ -251,7 +296,8 @@ print("Data read from I2C: ", data)
 
 The UART example is focused on demonstrating serial communication using the Universal Asynchronous Receiver-Transmitter (UART) interface. This is commonly used for communication between microcontrollers and computers or other serial devices. The code sends a string over UART and then reads and prints any received data.
 
-#### C++ Implementation
+#### C++ Implementation (UART)
+
 ```cpp
 #include <mraa.hpp>
 #include <iostream>
@@ -280,7 +326,8 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (UART)
+
 ```python
 import mraa
 import time
@@ -307,7 +354,8 @@ if uart.dataAvailable():
 
 In the SPI example, we explore how to use the Serial Peripheral Interface (SPI) for communication. SPI is a common method for short-distance communication with sensors and other peripherals. The example includes sending and then immediately reading a byte of data using SPI.
 
-#### C++ Implementation
+#### C++ Implementation (SPI)
+
 ```cpp
 #include <mraa.hpp>
 #include <iostream>
@@ -326,7 +374,8 @@ int main() {
 }
 ```
 
-#### Python Implementation
+#### Python Implementation (SPI)
+
 ```python
 import mraa
 
@@ -340,38 +389,13 @@ received_data = spi.write(data_to_send)
 print("Data received from SPI: ", received_data)
 ```
 
-## Interrupt by USR-Button
+### Interrupt by USR-Button
 
 This code example for the IOT2050 demonstrating how to set up an interrupt service routine (ISR). It initializes a GPIO pin, linked to the devices USR-Button, as an input, sets its mode, and assigns an interrupt callback function that is triggered when the button connected to the pin is pressed.
 
-#### C++ Implementation
+#### C++ Implementation (USR)
+
 ```cpp
-import mraa
-
-# Initialize I/Os
-pin = 20
-
-# Set up GPIO pin
-int_pin = mraa.Gpio(pin)
-int_pin.dir(mraa.DIR_IN)          # Set pin direction to input
-int_pin.mode(mraa.MODE_PULLUP)    # Enable pull-up resistor
-
-# Define the interrupt callback function
-def interrupt_callback(args):
-    print("USR Button pressed. My function is now executing. :)")
-
-# Register the interrupt_callback function as an interrupt on the USR button
-int_pin.isr(mraa.EDGE_BOTH, interrupt_callback, interrupt_callback)
-
-print("Starting Interrupt Routine on Pin: " + str(pin) + ".")
-
-# Keep the program running to listen for the interrupt
-while True:
-    pass
-```
-
-#### Python Implementation
-```python
 #include <mraa.hpp>
 #include <iostream>
 
@@ -379,7 +403,7 @@ while True:
 void interrupt_callback(void* args);
 
 int main() {
-    // Initialize USR-Buttin GPIO
+    // Initialize USR-Button GPIO
     int pin = 20;
 
     // Set up GPIO pin
@@ -406,7 +430,54 @@ void interrupt_callback(void* args) {
 }
 ```
 
+#### Python Implementation (USR)
+
+```python
+import mraa
+
+# Initialize I/Os
+pin = 20
+
+# Set up GPIO pin
+int_pin = mraa.Gpio(pin)
+int_pin.dir(mraa.DIR_IN)          # Set pin direction to input
+int_pin.mode(mraa.MODE_PULLUP)    # Enable pull-up resistor
+
+# Define the interrupt callback function
+def interrupt_callback(args):
+    print("USR Button pressed. My function is now executing. :)")
+
+# Register the interrupt_callback function as an interrupt on the USR button
+int_pin.isr(mraa.EDGE_BOTH, interrupt_callback, interrupt_callback)
+
+print("Starting Interrupt Routine on Pin: " + str(pin) + ".")
+
+# Keep the program running to listen for the interrupt
+while True:
+    pass
+```
+
 ## Additional Notes
+
 - Ensure that the pin numbers and bus numbers used in the examples match those of your specific hardware setup.
 - Be cautious when interfacing with hardware to avoid damaging your SIMATIC IOT2050 or connected devices.
 - Some examples may require additional configuration or setup steps specific to your application or hardware.
+
+## **Related Links**
+
+||Topic|
+|-|-|
+|1|SIMATIC IOT2050 forum: [https://support.industry.siemens.com/tf/ww/en/threads/309](https://support.industry.siemens.com/tf/ww/en/threads/309)|
+|2|SIMATIC IOT2050 Getting Started: [https://support.industry.siemens.com/tf/ww/en/posts/238945/](https://support.industry.siemens.com/tf/ww/en/posts/238945/)|
+|3|Operating Instructions: [https://support.industry.siemens.com/cs/ww/en/view/109779016](https://support.industry.siemens.com/cs/ww/en/view/109779016)|
+
+## Contribution and Contribution License Agreement
+
+Thank you for your interest in contributing. Anybody is free to report bugs, unclear documentation, and other problems regarding this repository in the Issues section.
+Additionally everybody is free to propose any changes to this repository using Pull Requests.
+
+If you haven't previously signed the [Siemens Contributor License Agreement](https://cla-assistant.io/industrial-edge/) (CLA), the system will automatically prompt you to do so when you submit your Pull Request. This can be conveniently done through the CLA Assistant's online platform. Once the CLA is signed, your Pull Request will automatically be cleared and made ready for merging if all other test stages succeed.
+
+## **Licence and Legal Information**
+
+Please read the [Legal information](LICENSE.md).
